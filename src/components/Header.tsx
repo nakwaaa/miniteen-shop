@@ -1,92 +1,163 @@
+'use client';
+
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import AuthModal from '@/components/AuthModal';
 
 export default function Header() {
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  // 處理登出
+  const handleLogout = () => {
+    logout();
+    setShowUserMenu(false);
+  };
+
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-purple-600">
-              MINITEEN SHOP
-            </h1>
-          </div>
+    <>
+      <header className="bg-white shadow-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo Section */}
+            <div className="flex-shrink-0">
+              <h1 className="text-2xl font-bold text-purple-600">
+                MINITEEN SHOP
+              </h1>
+            </div>
 
-          {/* Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            <a
-              href="#"
-              className="text-gray-700 hover:text-purple-600 transition-colors"
-            >
-              認識MINITEEN
-            </a>
-            <a
-              href="#"
-              className="text-gray-700 hover:text-purple-600 transition-colors"
-            >
-              SEVENTEEN
-            </a>
-            <a
-              href="#"
-              className="text-gray-700 hover:text-purple-600 transition-colors"
-            >
-              週邊商品
-            </a>
-          </nav>
-
-          {/* Search Bar */}
-          <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <input
-                type="text"
-                placeholder="搜尋偶像周邊..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 text-gray-400 hover:text-purple-600"
+            {/* Navigation Links */}
+            <nav className="hidden md:flex space-x-8">
+              <a
+                href="#"
+                className="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition-colors"
               >
-                🔍
-              </Button>
-            </div>
-          </div>
+                認識MINITEEN
+              </a>
+              <a
+                href="#"
+                className="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition-colors"
+              >
+                SEVENTEEN
+              </a>
+              <a
+                href="#"
+                className="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition-colors"
+              >
+                週邊商品
+              </a>
+            </nav>
 
-          {/* User Actions */}
-          <div className="flex items-center space-x-4">
-            {/* Cart */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative text-gray-700 hover:text-purple-600"
-            >
-              🛒
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                3
-              </span>
-            </Button>
-
-            {/* Login/Register */}
-            <div className="hidden md:flex space-x-2">
-              <Button variant="purple-outline" size="default">
-                登入
+            {/* Right Section */}
+            <div className="flex items-center space-x-4">
+              {/* Search Button */}
+              <Button variant="purple-outline" size="sm">
+                🔍 搜尋
               </Button>
-              <Button variant="purple" size="default">
-                註冊
-              </Button>
-            </div>
 
-            {/* Mobile Menu */}
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <div className="w-6 h-6 flex flex-col justify-center space-y-1">
-                <div className="h-0.5 bg-gray-600"></div>
-                <div className="h-0.5 bg-gray-600"></div>
-                <div className="h-0.5 bg-gray-600"></div>
+              {/* User Auth Section */}
+              <div className="hidden md:flex space-x-2">
+                {isLoading ? (
+                  <div className="animate-pulse flex space-x-2">
+                    <div className="h-10 w-20 bg-gray-200 rounded"></div>
+                  </div>
+                ) : isAuthenticated && user ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-purple-600 transition-colors"
+                    >
+                      <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                        {user.name.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="font-medium">{user.name}</span>
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+
+                    {/* 用戶下拉選單 */}
+                    {showUserMenu && (
+                      <div className="absolute right-0 mt-2 w-52 bg-white rounded-md shadow-lg border z-50">
+                        <div className="py-1">
+                          <div className="px-4 py-2 text-sm text-gray-500 border-b">
+                            {user.email}
+                          </div>
+                          <a
+                            href="#"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            個人資料
+                          </a>
+                          <a
+                            href="#"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            訂單記錄
+                          </a>
+                          <a
+                            href="#"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            我的收藏
+                          </a>
+                          <button
+                            onClick={handleLogout}
+                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                          >
+                            登出
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Button
+                    variant="purple"
+                    size="default"
+                    onClick={() => setShowAuthModal(true)}
+                  >
+                    登入/註冊
+                  </Button>
+                )}
               </div>
-            </Button>
+
+              {/* Mobile menu button */}
+              <div className="md:hidden">
+                <Button variant="purple-outline" size="sm">
+                  ☰
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+
+        {/* 點擊外部關閉用戶選單 */}
+        {showUserMenu && (
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => setShowUserMenu(false)}
+          ></div>
+        )}
+      </header>
+
+      {/* 認證彈窗 */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
+    </>
   );
 }
