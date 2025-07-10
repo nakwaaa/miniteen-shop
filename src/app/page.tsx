@@ -4,24 +4,12 @@ export default function Home() {
   return (
     <div className="bg-gray-50">
       {/* Hero Banner */}
-      <section className="relative bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="text-center">
-            <h2 className="text-4xl md:text-6xl font-bold mb-6">
-              SEVENTEEN官娃
-            </h2>
-            <p className="text-xl md:text-2xl mb-8 opacity-90">
-              和最可愛的MINITEEN一起玩吧！
-            </p>
-            <Button
-              variant="secondary"
-              size="xl"
-              className="bg-white text-purple-600 font-semibold hover:bg-gray-100"
-            >
-              立即購物
-            </Button>
-          </div>
-        </div>
+      <section
+        className="relative min-h-[600px] bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('/MINITEEEN.JPG')",
+        }}
+      >
       </section>
 
       {/* Product Categories */}
@@ -32,10 +20,10 @@ export default function Home() {
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { name: '專輯&寫真', icon: '💿', color: 'bg-blue-100' },
-              { name: '應援周邊', icon: '🎉', color: 'bg-pink-100' },
-              { name: '官方商品', icon: '⭐', color: 'bg-green-100' },
-              { name: '收藏品', icon: '🎁', color: 'bg-yellow-100' },
+              { name: '文具', icon: '💿', color: 'bg-blue-100' },
+              { name: '配件', icon: '🎉', color: 'bg-pink-100' },
+              { name: '服飾', icon: '⭐', color: 'bg-green-100' },
+              { name: '生活用品', icon: '🎁', color: 'bg-yellow-100' },
             ].map((category, index) => (
               <div
                 key={index}
