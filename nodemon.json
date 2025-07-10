@@ -1,0 +1,14 @@
+{
+  "watch": ["backend/**/*"],
+  "ext": "ts,js,json",
+  "ignore": ["backend/data/**/*", "dist/**/*", "node_modules/**/*"],
+  "exec": "ts-node --project tsconfig.backend.json backend/server.ts",
+  "env": {
+    "NODE_ENV": "development",
+    "PORT": "3001",
+    "JWT_SECRET": "your-super-secret-jwt-key-change-in-production",
+    "JWT_EXPIRES_IN": "24h",
+    "FRONTEND_URL": "http://localhost:3000"
+  },
+  "delay": "1000"
+}

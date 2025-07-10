@@ -1,0 +1,2 @@
+# 這個檔案用於保持 backend/data 目錄結構
+# 實際的用戶資料檔案 (*.json) 會被 .gitignore 忽略 
