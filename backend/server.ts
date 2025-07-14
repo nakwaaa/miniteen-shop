@@ -9,6 +9,7 @@ dotenv.config();
 
 // 導入路由
 import authRoutes from './routes/auth';
+import productRoutes from './routes/products';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: true })); // URL 編碼解析
 
 // 路由設定
 app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
 
 // 健康檢查端點
 app.get('/api/health', (req, res) => {

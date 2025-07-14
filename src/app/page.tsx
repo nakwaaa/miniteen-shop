@@ -9,8 +9,7 @@ export default function Home() {
         style={{
           backgroundImage: "url('/MINITEEEN.JPG')",
         }}
-      >
-      </section>
+      ></section>
 
       {/* Product Categories */}
       <section className="py-16">
@@ -47,29 +46,26 @@ export default function Home() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {[
-              { name: '限定專輯', price: 'NT$ 890', image: '💿', rating: 4.9 },
+              { name: '限定專輯', price: 'NT$ 890', image: '💿' },
               {
                 name: '官方寫真集',
                 price: 'NT$ 1,290',
                 image: '📸',
-                rating: 4.8,
               },
               {
                 name: '應援手燈',
                 price: 'NT$ 1,590',
                 image: '🔦',
-                rating: 4.7,
               },
-              { name: '海報套組', price: 'NT$ 390', image: '🖼️', rating: 4.6 },
-              { name: '透明卡片', price: 'NT$ 290', image: '🃏', rating: 4.8 },
+              { name: '海報套組', price: 'NT$ 390', image: '🖼️' },
+              { name: '透明卡片', price: 'NT$ 290', image: '🃏' },
               {
                 name: '壓克力立牌',
                 price: 'NT$ 690',
                 image: '🎭',
-                rating: 4.5,
               },
-              { name: '徽章套組', price: 'NT$ 490', image: '📍', rating: 4.7 },
-              { name: '簽名板', price: 'NT$ 1,990', image: '✍️', rating: 4.9 },
+              { name: '徽章套組', price: 'NT$ 490', image: '📍' },
+              { name: '簽名板', price: 'NT$ 1,990', image: '✍️' },
             ].map((product, index) => (
               <div
                 key={index}
@@ -79,12 +75,6 @@ export default function Home() {
                 <h4 className="font-semibold text-gray-800 mb-2">
                   {product.name}
                 </h4>
-                <div className="flex items-center mb-2">
-                  <span className="text-yellow-400">★</span>
-                  <span className="text-sm text-gray-600 ml-1">
-                    {product.rating}
-                  </span>
-                </div>
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-bold text-purple-600">
                     {product.price}

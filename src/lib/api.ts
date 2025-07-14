@@ -96,6 +96,37 @@ export const tokenManager = {
   },
 };
 
+// 商品類型定義
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+  image: string;
+  inStock: boolean;
+  stockCount: number;
+  isNew?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductsResponse {
+  products: Product[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface ProductFilter {
+  category?: string;
+  inStock?: boolean;
+  isNew?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
+  search?: string;
+}
+
 // 認證API
 export const authApi = {
   // 用戶註冊
@@ -135,4 +166,101 @@ export const authApi = {
       },
     });
   },
+};
+
+// 商品API
+export const productApi = {
+  // 獲取商品列表
+  getProducts: async (
+    filter: ProductFilter = {},
+    page: number = 1,
+    limit: number = 12
+  ): Promise<ApiResponse<ProductsResponse>> => {
+    const params = new URLSearchParams();
+    
+    // 添加篩選參數
+    if (filter.category) params.append('category', filter.category);
+    if (filter.inStock !== undefined) params.append('inStock', filter.inStock.toString());
+    if (filter.isNew !== undefined) params.append('isNew', filter.isNew.toString());
+    if (filter.minPrice !== undefined) params.append('minPrice', filter.minPrice.toString());
+    if (filter.maxPrice !== undefined) params.append('maxPrice', filter.maxPrice.toString());
+    if (filter.search) params.append('search', filter.search);
+    
+    // 添加分頁參數
+    params.append('page', page.toString());
+    params.append('limit', limit.toString());
+    
+    const queryString = params.toString();
+    const endpoint = `/api/products${queryString ? `?${queryString}` : ''}`;
+    
+    return apiRequest<ProductsResponse>(endpoint);
+  },
+
+  // 根據ID獲取商品
+  getProductById: async (id: string): Promise<ApiResponse<{ product: Product }>> => {
+    return apiRequest<{ product: Product }>(`/api/products/${id}`);
+  },
+
+  // 獲取商品統計資料
+  getStats: async (): Promise<ApiResponse> => {
+    return apiRequest('/api/products/analytics/stats');
+  },
+
+  // 建立新商品（需要認證）
+  createProduct: async (productData: {
+    name: string;
+    price: number;
+    category: string;
+    image: string;
+    stockCount: number;
+    isNew?: boolean;
+  }): Promise<ApiResponse<{ product: Product }>> => {
+    const token = tokenManager.getToken();
+    return apiRequest<{ product: Product }>('/api/products', {
+      method: 'POST',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify(productData),
+    });
+  },
+
+  // 更新商品（需要認證）
+  updateProduct: async (
+    id: string,
+    updateData: Partial<{
+      name: string;
+      price: number;
+      category: string;
+      image: string;
+      inStock: boolean;
+      stockCount: number;
+      isNew: boolean;
+    }>
+  ): Promise<ApiResponse<{ product: Product }>> => {
+    const token = tokenManager.getToken();
+    return apiRequest<{ product: Product }>(`/api/products/${id}`, {
+      method: 'PUT',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify(updateData),
+    });
+  },
+
+  // 刪除商品（需要認證）
+  deleteProduct: async (id: string): Promise<ApiResponse> => {
+    const token = tokenManager.getToken();
+    return apiRequest(`/api/products/${id}`, {
+      method: 'DELETE',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
+  },
+};
+
+// 工具函數
+export const formatPrice = (price: number): string => {
+  return `NT$ ${price.toLocaleString()}`;
 };

@@ -37,13 +37,13 @@ export default function Header() {
                 認識MINITEEN
               </a>
               <a
-                href="#"
+                href="/seventeen"
                 className="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition-colors"
               >
                 SEVENTEEN
               </a>
               <a
-                href="#"
+                href="/products"
                 className="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition-colors"
               >
                 週邊商品
