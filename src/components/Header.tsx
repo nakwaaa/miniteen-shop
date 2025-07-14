@@ -1,12 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 import AuthModal from '@/components/AuthModal';
 
 export default function Header() {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { totalItems } = useCart();
+  const router = useRouter();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -56,6 +60,28 @@ export default function Header() {
               <Button variant="purple-outline" size="sm">
                 🔍 搜尋
               </Button>
+
+              {/* Shopping Cart Button - 只對登入用戶顯示 */}
+              {isAuthenticated && (
+                <div className="relative">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      router.push('/cart');
+                    }}
+                    className="relative"
+                  >
+                    🛒
+                  </Button>
+                  {/* 購物車商品數量標示 */}
+                  {totalItems > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                      {totalItems}
+                    </span>
+                  )}
+                </div>
+              )}
 
               {/* User Auth Section */}
               <div className="hidden md:flex space-x-2">

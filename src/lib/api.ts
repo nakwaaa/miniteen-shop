@@ -52,12 +52,23 @@ async function apiRequest<T>(
 ): Promise<ApiResponse<T>> {
   const url = `${API_BASE_URL}${endpoint}`;
 
+  // 確保 Content-Type 正確設置
+  const headers = new Headers();
+
+  // 先設置默認 Content-Type
+  headers.set('Content-Type', 'application/json');
+
+  // 然後添加其他 headers
+  if (options.headers) {
+    const optionHeaders = new Headers(options.headers);
+    optionHeaders.forEach((value, key) => {
+      headers.set(key, value);
+    });
+  }
+
   const config: RequestInit = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
     ...options,
+    headers,
   };
 
   try {
@@ -177,27 +188,33 @@ export const productApi = {
     limit: number = 12
   ): Promise<ApiResponse<ProductsResponse>> => {
     const params = new URLSearchParams();
-    
+
     // 添加篩選參數
     if (filter.category) params.append('category', filter.category);
-    if (filter.inStock !== undefined) params.append('inStock', filter.inStock.toString());
-    if (filter.isNew !== undefined) params.append('isNew', filter.isNew.toString());
-    if (filter.minPrice !== undefined) params.append('minPrice', filter.minPrice.toString());
-    if (filter.maxPrice !== undefined) params.append('maxPrice', filter.maxPrice.toString());
+    if (filter.inStock !== undefined)
+      params.append('inStock', filter.inStock.toString());
+    if (filter.isNew !== undefined)
+      params.append('isNew', filter.isNew.toString());
+    if (filter.minPrice !== undefined)
+      params.append('minPrice', filter.minPrice.toString());
+    if (filter.maxPrice !== undefined)
+      params.append('maxPrice', filter.maxPrice.toString());
     if (filter.search) params.append('search', filter.search);
-    
+
     // 添加分頁參數
     params.append('page', page.toString());
     params.append('limit', limit.toString());
-    
+
     const queryString = params.toString();
     const endpoint = `/api/products${queryString ? `?${queryString}` : ''}`;
-    
+
     return apiRequest<ProductsResponse>(endpoint);
   },
 
   // 根據ID獲取商品
-  getProductById: async (id: string): Promise<ApiResponse<{ product: Product }>> => {
+  getProductById: async (
+    id: string
+  ): Promise<ApiResponse<{ product: Product }>> => {
     return apiRequest<{ product: Product }>(`/api/products/${id}`);
   },
 
@@ -252,6 +269,120 @@ export const productApi = {
   deleteProduct: async (id: string): Promise<ApiResponse> => {
     const token = tokenManager.getToken();
     return apiRequest(`/api/products/${id}`, {
+      method: 'DELETE',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
+  },
+};
+
+// 購物車商品項目類型
+export interface CartItem {
+  id: string;
+  productId: string;
+  product: Product;
+  quantity: number;
+  addedAt: string;
+}
+
+// 購物車類型
+export interface Cart {
+  id: string;
+  userId: string;
+  items: CartItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 購物車響應類型
+export interface CartResponse {
+  cart: Cart;
+  items: CartItem[];
+  totalItems: number;
+  totalAmount: number;
+}
+
+// 購物車API
+export const cartApi = {
+  // 測試認證狀態
+  testAuth: async (): Promise<
+    ApiResponse<{ user: { id: string; email: string } }>
+  > => {
+    const token = tokenManager.getToken();
+    console.log('測試認證 - Token:', token ? '存在' : '不存在');
+
+    return apiRequest<{ user: { id: string; email: string } }>(
+      '/api/cart/test-auth',
+      {
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      }
+    );
+  },
+
+  // 獲取購物車
+  getCart: async (): Promise<ApiResponse<CartResponse>> => {
+    const token = tokenManager.getToken();
+    return apiRequest<CartResponse>('/api/cart', {
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
+  },
+
+  // 加入商品到購物車
+  addToCart: async (
+    productId: string,
+    quantity: number
+  ): Promise<ApiResponse<CartResponse>> => {
+    const token = tokenManager.getToken();
+    const requestBody = { productId, quantity };
+
+    return apiRequest<CartResponse>('/api/cart/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify(requestBody),
+    });
+  },
+
+  // 更新購物車商品數量
+  updateCartItem: async (
+    productId: string,
+    quantity: number
+  ): Promise<ApiResponse<CartResponse>> => {
+    const token = tokenManager.getToken();
+    return apiRequest<CartResponse>(`/api/cart/items/${productId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify({ quantity }),
+    });
+  },
+
+  // 從購物車移除商品
+  removeFromCart: async (
+    productId: string
+  ): Promise<ApiResponse<CartResponse>> => {
+    const token = tokenManager.getToken();
+    return apiRequest<CartResponse>(`/api/cart/items/${productId}`, {
+      method: 'DELETE',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
+  },
+
+  // 清空購物車
+  clearCart: async (): Promise<ApiResponse<CartResponse>> => {
+    const token = tokenManager.getToken();
+    return apiRequest<CartResponse>('/api/cart', {
       method: 'DELETE',
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),

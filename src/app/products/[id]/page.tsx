@@ -6,12 +6,14 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { productApi, Product, formatPrice } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 import { toast } from 'sonner';
 
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { isAuthenticated } = useAuth();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,22 +68,22 @@ export default function ProductDetailPage() {
   };
 
   // 處理加入購物車
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!isAuthenticated) {
-      toast.error('請先登入', {
-        description: '您需要先登入才能將商品加入購物車',
-      });
+      toast.error('請先登入才能使用購物車功能');
       return;
     }
 
-    if (!product || !product.inStock) {
+    if (!product) {
       return;
     }
 
-    // TODO: 實際的購物車邏輯
-    toast.success('已加入購物車', {
-      description: `${product.name} x${quantity} 已加入購物車`,
-    });
+    try {
+      await addToCart(product, quantity);
+    } catch (error) {
+      // 錯誤處理已在 CartContext 中完成
+      console.error('加入購物車失敗:', error);
+    }
   };
 
   // 載入狀態

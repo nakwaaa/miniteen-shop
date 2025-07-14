@@ -4,6 +4,7 @@ import './globals.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { AuthProvider } from '../contexts/AuthContext';
+import { CartProvider } from '../contexts/CartContext';
 import { Toaster } from 'sonner';
 
 const geistSans = Geist({
@@ -32,15 +33,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <AuthProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <Toaster
-            position="bottom-right"
-            expand={true}
-            closeButton
-            theme="light"
-          />
+          <CartProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <Toaster
+              position="bottom-right"
+              expand={true}
+              closeButton
+              theme="light"
+            />
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>
