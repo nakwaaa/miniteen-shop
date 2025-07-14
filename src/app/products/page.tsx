@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { productApi, Product, ProductFilter, formatPrice } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
@@ -170,75 +171,80 @@ export default function ProductsPage() {
                       key={product.id}
                       className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden group"
                     >
-                      {/* 商品圖片區域 */}
-                      <div className="relative aspect-square overflow-hidden">
-                        {/* 商品圖片 */}
-                        {product.image ? (
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => {
-                              // 圖片載入失敗時顯示佔位圖
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              const fallback =
-                                target.nextElementSibling as HTMLElement;
-                              if (fallback) fallback.style.display = 'flex';
-                            }}
-                          />
-                        ) : null}
-                        {/* 佔位圖 (圖片載入失敗時顯示) */}
-                        <div
-                          className="w-full h-full bg-gradient-to-br from-purple-400 to-purple-600 bg-cover bg-center group-hover:scale-105 transition-transform duration-300 flex items-center justify-center"
-                          style={{ display: product.image ? 'none' : 'flex' }}
-                        >
-                          <span className="text-white font-bold text-lg text-center px-4">
-                            {product.name.split(' ')[0]}
-                          </span>
-                        </div>
-
-                        {/* 標籤區域 */}
-                        <div className="absolute top-2 left-2 flex flex-col gap-1">
-                          {product.isNew && (
-                            <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">
-                              新品
+                      {/* 可點擊的商品詳情區域 */}
+                      <Link href={`/products/${product.id}`} className="block">
+                        {/* 商品圖片區域 */}
+                        <div className="relative aspect-square overflow-hidden">
+                          {/* 商品圖片 */}
+                          {product.image ? (
+                            <img
+                              src={product.image}
+                              alt={product.name}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              onError={(e) => {
+                                // 圖片載入失敗時顯示佔位圖
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const fallback =
+                                  target.nextElementSibling as HTMLElement;
+                                if (fallback) fallback.style.display = 'flex';
+                              }}
+                            />
+                          ) : null}
+                          {/* 佔位圖 (圖片載入失敗時顯示) */}
+                          <div
+                            className="w-full h-full bg-gradient-to-br from-purple-400 to-purple-600 bg-cover bg-center group-hover:scale-105 transition-transform duration-300 flex items-center justify-center"
+                            style={{ display: product.image ? 'none' : 'flex' }}
+                          >
+                            <span className="text-white font-bold text-lg text-center px-4">
+                              {product.name.split(' ')[0]}
                             </span>
+                          </div>
+
+                          {/* 標籤區域 */}
+                          <div className="absolute top-2 left-2 flex flex-col gap-1">
+                            {product.isNew && (
+                              <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">
+                                新品
+                              </span>
+                            )}
+                          </div>
+
+                          {/* 庫存狀態 */}
+                          {!product.inStock && (
+                            <div className="absolute inset-0 bg-white/40 flex items-center justify-center">
+                              <span className="bg-gray-800 text-white px-3 py-1 rounded text-sm font-medium">
+                                暫時缺貨
+                              </span>
+                            </div>
                           )}
                         </div>
 
-                        {/* 庫存狀態 */}
-                        {!product.inStock && (
-                          <div className="absolute inset-0 bg-white/40 flex items-center justify-center">
-                            <span className="bg-gray-800 text-white px-3 py-1 rounded text-sm font-medium">
-                              暫時缺貨
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                        {/* 商品資訊區域 */}
+                        <div className="p-4">
+                          {/* 商品名稱 */}
+                          <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors">
+                            {product.name}
+                          </h3>
 
-                      {/* 商品資訊區域 */}
-                      <div className="p-4">
-                        {/* 商品名稱 */}
-                        <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors">
-                          {product.name}
-                        </h3>
-
-                        {/* 價格區域 */}
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xl font-bold text-purple-600">
-                              {formatPrice(product.price)}
-                            </span>
+                          {/* 價格區域 */}
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xl font-bold text-purple-600">
+                                {formatPrice(product.price)}
+                              </span>
+                            </div>
+                            {product.inStock && product.stockCount <= 20 && (
+                              <span className="text-xs text-orange-600 font-medium">
+                                僅剩 {product.stockCount} 件
+                              </span>
+                            )}
                           </div>
-                          {product.inStock && product.stockCount <= 20 && (
-                            <span className="text-xs text-orange-600 font-medium">
-                              僅剩 {product.stockCount} 件
-                            </span>
-                          )}
                         </div>
+                      </Link>
 
-                        {/* 操作按鈕 */}
+                      {/* 操作按鈕 */}
+                      <div className="p-4 pt-0">
                         <div className="flex gap-2">
                           <Button
                             variant={product.inStock ? 'purple' : 'outline'}
