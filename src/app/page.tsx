@@ -2,16 +2,29 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { productApi, Product, formatPrice } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
+
+// MINITEEN 角色類型定義
+interface MiniteenCharacter {
+  id: string;
+  name: string;
+  image: string;
+  description: string;
+}
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
   const { addToCart } = useCart();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [miniteenCharacters, setMiniteenCharacters] = useState<
+    MiniteenCharacter[]
+  >([]);
+  const [charactersLoading, setCharactersLoading] = useState(true);
 
   // 獲取熱門商品資料（前8樣）
   useEffect(() => {
@@ -30,6 +43,26 @@ export default function Home() {
     };
 
     fetchFeaturedProducts();
+  }, []);
+
+  // 獲取 MINITEEN 角色資料
+  useEffect(() => {
+    const fetchMiniteenCharacters = async () => {
+      try {
+        setCharactersLoading(true);
+        const response = await fetch('/api/miniteen');
+        if (response.ok) {
+          const characters = await response.json();
+          setMiniteenCharacters(characters);
+        }
+      } catch (error) {
+        console.error('獲取 MINITEEN 角色失敗:', error);
+      } finally {
+        setCharactersLoading(false);
+      }
+    };
+
+    fetchMiniteenCharacters();
   }, []);
 
   // 處理加入購物車
@@ -68,161 +101,37 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-            {/* choitcherry */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/choitcherry.jpg"
-                  alt="choitcherry"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">choitcherry</p>
-            </div>
-
-            {/* jjongtoram */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/jjongtoram.jpg"
-                  alt="jjongtoram"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">jjongtoram</p>
-            </div>
-
-            {/* shuasumi */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/shuasumi.jpeg"
-                  alt="shuasumi"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">shuasumi</p>
-            </div>
-
-            {/* OCL */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/OCL.jpg"
-                  alt="OCL"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">OCL</p>
-            </div>
-
-            {/* tamtam */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/tamtam.jpeg"
-                  alt="tamtam"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">tamtam</p>
-            </div>
-
-            {/* foxdungee */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/foxdungee.jpeg"
-                  alt="foxdungee"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">foxdungee</p>
-            </div>
-
-            {/* ppyopuli */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/ppyopuli.jpg"
-                  alt="ppyopuli"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">ppyopuli</p>
-            </div>
-
-            {/* Thepalee */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/Thepalee.jpg"
-                  alt="Thepalee"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">Thepalee</p>
-            </div>
-
-            {/* kimja */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/kimja.jpeg"
-                  alt="kimja"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">kimja</p>
-            </div>
-
-            {/* DOA */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/DOA.jpg"
-                  alt="DOA"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">DOA</p>
-            </div>
-
-            {/* bboogyuli */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/bboogyuli.jpeg"
-                  alt="bboogyuli"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">bboogyuli</p>
-            </div>
-
-            {/* nonver */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/nonver.jpg"
-                  alt="nonver"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">nonver</p>
-            </div>
-
-            {/* chandalee */}
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
-                <img
-                  src="/MINITEEN/chandalee.jpeg"
-                  alt="chandalee"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-semibold text-gray-800 text-sm">chandalee</p>
-            </div>
+            {charactersLoading
+              ? // 載入中的骨架屏
+                Array.from({ length: 13 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center"
+                  >
+                    <div className="w-16 h-16 mx-auto mb-2 rounded-full bg-gray-300 animate-pulse"></div>
+                    <div className="h-4 bg-gray-300 rounded animate-pulse"></div>
+                  </div>
+                ))
+              : // 實際角色資料
+                miniteenCharacters.map((character) => (
+                  <div
+                    key={character.id}
+                    className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 text-center hover:shadow-md transition-shadow"
+                  >
+                    <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden">
+                      <Image
+                        src={character.image}
+                        alt={character.name}
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <p className="font-semibold text-gray-800 text-sm">
+                      {character.name}
+                    </p>
+                  </div>
+                ))}
           </div>
         </div>
       </section>
@@ -257,9 +166,11 @@ export default function Home() {
                 >
                   <Link href={`/products/${product.id}`}>
                     <div className="mb-4 cursor-pointer">
-                      <img
+                      <Image
                         src={product.image}
                         alt={product.name}
+                        width={300}
+                        height={192}
                         className="w-full h-48 object-cover rounded"
                       />
                     </div>

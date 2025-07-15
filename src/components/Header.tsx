@@ -38,12 +38,12 @@ export default function Header() {
 
             {/* Navigation Links */}
             <nav className="hidden md:flex space-x-8">
-              <a
-                href="#"
+              <Link
+                href="/miniteen"
                 className="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition-colors"
               >
                 認識MINITEEN
-              </a>
+              </Link>
               <a
                 href="/seventeen"
                 className="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition-colors"
