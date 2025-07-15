@@ -44,18 +44,18 @@ export default function Header() {
               >
                 認識MINITEEN
               </Link>
-              <a
+              <Link
                 href="/seventeen"
                 className="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition-colors"
               >
                 SEVENTEEN
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/products"
                 className="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition-colors"
               >
                 週邊商品
-              </a>
+              </Link>
             </nav>
 
             {/* Right Section */}
