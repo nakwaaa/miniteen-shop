@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import AuthModal from '@/components/AuthModal';
+import Link from 'next/link';
 
 export default function Header() {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
@@ -27,9 +28,12 @@ export default function Header() {
           <div className="flex justify-between items-center h-16">
             {/* Logo Section */}
             <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-purple-600">
+              <Link
+                href="/"
+                className="text-2xl font-bold text-purple-600 hover:text-purple-700 transition-colors"
+              >
                 MINITEEN SHOP
-              </h1>
+              </Link>
             </div>
 
             {/* Navigation Links */}
