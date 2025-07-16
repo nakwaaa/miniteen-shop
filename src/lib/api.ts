@@ -5,9 +5,14 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 export interface User {
   id: string;
   email: string;
-  name: string;
+  name: string; // 暱稱/顯示名稱
+  realName?: string;
+  phone?: string;
+  birthday?: string;
+  avatar?: string; // 頭像圖片路徑或 base64
   createdAt: string;
   updatedAt: string;
+  passwordUpdatedAt: string; // 密碼上次更新時間
   isActive: boolean;
 }
 
@@ -28,6 +33,21 @@ export interface RegisterRequest {
 export interface LoginRequest {
   email: string;
   password: string;
+}
+
+// 個人資料更新請求類型
+export interface UpdateProfileRequest {
+  name?: string; // 暱稱/顯示名稱
+  realName?: string;
+  phone?: string;
+  birthday?: string;
+  avatar?: string; // 頭像圖片路徑或 base64
+}
+
+// 密碼變更請求類型
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
 }
 
 // API響應類型
@@ -52,13 +72,15 @@ async function apiRequest<T>(
 ): Promise<ApiResponse<T>> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  // 確保 Content-Type 正確設置
+  // 處理 headers
   const headers = new Headers();
 
-  // 先設置默認 Content-Type
-  headers.set('Content-Type', 'application/json');
+  // 只在非 FormData 請求時設置 Content-Type
+  if (!(options.body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json');
+  }
 
-  // 然後添加其他 headers
+  // 添加其他 headers
   if (options.headers) {
     const optionHeaders = new Headers(options.headers);
     optionHeaders.forEach((value, key) => {
@@ -387,6 +409,71 @@ export const cartApi = {
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),
       },
+    });
+  },
+};
+
+// 個人資料 API
+export const profileApi = {
+  // 獲取個人資料
+  getProfile: async (): Promise<ApiResponse<User>> => {
+    const token = tokenManager.getToken();
+    return apiRequest<User>('/api/profile', {
+      method: 'GET',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
+  },
+
+  // 更新個人資料
+  updateProfile: async (
+    profileData: UpdateProfileRequest
+  ): Promise<ApiResponse<User>> => {
+    const token = tokenManager.getToken();
+    return apiRequest<User>('/api/profile', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify(profileData),
+    });
+  },
+
+  // 變更密碼
+  changePassword: async (
+    passwordData: ChangePasswordRequest
+  ): Promise<ApiResponse<void>> => {
+    const token = tokenManager.getToken();
+    return apiRequest<void>('/api/profile/password', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify(passwordData),
+    });
+  },
+};
+
+// 上傳 API
+export const uploadApi = {
+  // 上傳頭像
+  uploadAvatar: async (file: File): Promise<ApiResponse<User>> => {
+    const token = tokenManager.getToken();
+
+    // 創建 FormData
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    return apiRequest<User>('/api/upload/avatar', {
+      method: 'POST',
+      headers: {
+        // 注意：不要設置 Content-Type，讓瀏覽器自動設置以包含 boundary
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
     });
   },
 };

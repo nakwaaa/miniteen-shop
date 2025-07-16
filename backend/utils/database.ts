@@ -60,7 +60,10 @@ export const findUserById = async (id: string): Promise<User | null> => {
  * 建立新用戶
  */
 export const createUser = async (
-  userData: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'isActive'>
+  userData: Omit<
+    User,
+    'id' | 'createdAt' | 'updatedAt' | 'passwordUpdatedAt' | 'isActive'
+  >
 ): Promise<User> => {
   const users = await getAllUsers();
 
@@ -72,11 +75,14 @@ export const createUser = async (
     throw new Error('該電子郵件已被註冊');
   }
 
+  const currentTime = new Date().toISOString();
+
   const newUser: User = {
     id: uuidv4(),
     ...userData,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: currentTime,
+    updatedAt: currentTime,
+    passwordUpdatedAt: currentTime, // 初始密碼設定時間
     isActive: true,
   };
 

@@ -11,6 +11,8 @@ dotenv.config();
 import authRoutes from './routes/auth';
 import productRoutes from './routes/products';
 import cartRoutes from './routes/cart';
+import profileRoutes from './routes/profile';
+import uploadRoutes from './routes/upload';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -31,6 +33,8 @@ app.use(express.urlencoded({ extended: true })); // URL 編碼解析
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // 健康檢查端點
 app.get('/api/health', (req, res) => {

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
@@ -60,11 +61,6 @@ export default function Header() {
 
             {/* Right Section */}
             <div className="flex items-center space-x-4">
-              {/* Search Button */}
-              <Button variant="purple-outline" size="sm">
-                🔍 搜尋
-              </Button>
-
               {/* Shopping Cart Button - 只對登入用戶顯示 */}
               {isAuthenticated && (
                 <div className="relative">
@@ -99,9 +95,21 @@ export default function Header() {
                       onClick={() => setShowUserMenu(!showUserMenu)}
                       className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-purple-600 transition-colors"
                     >
-                      <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
-                        {user.name.charAt(0).toUpperCase()}
-                      </div>
+                      {user.avatar ? (
+                        <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-purple-100">
+                          <Image
+                            src={user.avatar}
+                            alt="用戶頭像"
+                            width={32}
+                            height={32}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                          {user.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
                       <span className="font-medium">{user.name}</span>
                       <svg
                         className="w-4 h-4"
@@ -126,7 +134,7 @@ export default function Header() {
                             {user.email}
                           </div>
                           <a
-                            href="#"
+                            href="/user"
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >
                             個人資料
@@ -136,12 +144,6 @@ export default function Header() {
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >
                             訂單記錄
-                          </a>
-                          <a
-                            href="#"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            我的收藏
                           </a>
                           <button
                             onClick={handleLogout}
